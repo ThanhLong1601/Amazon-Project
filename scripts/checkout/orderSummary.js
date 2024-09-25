@@ -3,6 +3,7 @@ import { products, getProduct } from "../../data/products.js";
 import { formatCurrency } from "../utils/money.js";
 import {dayjs} from 'https://unpkg.com/dayjs@1.11.10/dayjs.min.js'
 import { deliveryOptions, getDeliveryOption } from "../../data/deliveryOptions.js";
+import {renderPaymentSummary}from './paymentSummary.js'
 
 
 
@@ -52,7 +53,7 @@ export function renderOrderSummary(){
                 <span class="update-quantity-link link-primary">
                   Update
                 </span>
-                <span class="delete-quantity-link link-primary js-delete-quantity" data-product-id="${matchingProduct.id}">
+                <span class="delete-quantity-link link-primary js-delete-link" data-product-id="${matchingProduct.id}">
                   Delete
                 </span>
               </div>
@@ -111,13 +112,15 @@ export function renderOrderSummary(){
   document.querySelector('.js-order-summary').innerHTML = cartSummaryHTML
 
 
-  document.querySelectorAll('.js-delete-quantity').forEach((link)=>{
+  document.querySelectorAll('.js-delete-link').forEach((link)=>{
     link.addEventListener('click', () => {
       const productId =  link.dataset.productId;
       removeFromCart(productId);
 
       const container = document.querySelector(`.js-cart-item-container-${productId}`);
       container.remove();
+
+      renderPaymentSummary()
     })
   });
 
@@ -126,7 +129,8 @@ export function renderOrderSummary(){
     element.addEventListener('click', () => {
       const {productId, deliveryOptionId} = element.dataset;
       updateDeliveryOption(productId, deliveryOptionId);
-      renderOrderSummary()
+      renderOrderSummary();
+      renderPaymentSummary();
     });
   });
 
